@@ -1,0 +1,94 @@
+---
+title: "Homework 2: Outlier Detection Review"
+author: "Chenthuran Abeyakaran"
+date: "2/27/2020"
+output: 
+  html_document: 
+    keep_md: yes
+    number_sections: yes
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+library(OutlierDetection)
+library(OutliersO3)
+library(outliers)
+```
+
+# Read and Summarize Data
+Apply the technique discussed above to the data set that you are using as part of the your problem. Please make sure to report the following:
+
+a) summary of you data sets
+Consider using summary function and use graphics to display your data
+```{r}
+full = read.csv("data/data.csv")
+full
+```
+
+```{r}
+data <- full[, c("acousticness", "danceability", "energy", "key", "instrumentalness", "mode", "liveness", "loudness", "speechiness", "tempo", "valence")]
+data <- data[complete.cases(data), ]
+data
+```
+
+```{r}
+summary(data)
+```
+
+```{r}
+boxplot(data$acousticness, ylab="Acousticness")
+boxplot(data$danceability, ylab="Danceability")
+boxplot(data$energy, ylab="Energy")
+boxplot(data$instrumentalness, ylab="Instrumentalness")
+boxplot(data$liveness, ylab="Liveness")
+boxplot(data$loudness, ylab="Loudness")
+boxplot(data$speechiness, ylab="Speechiness")
+boxplot(data$tempo, ylab="Tempo")
+boxplot(data$valence, ylab="Valence")
+
+hist(data$key, xlab="Key (Numeric Mapping)")
+hist(data$mode, xlab="Mode")
+```
+
+# Remove Outliers
+b) Apply all the outlier detection methods described above to your data set as they fit
+
+```{r}
+density_out <- dens(data, k=0.001*nrow(data), cutoff=0.999)
+density_out
+```
+
+```{r}
+maha_out <- maha(data, cutoff = 0.9999995)
+maha_out
+```
+
+c) Report outlier based on consensus rule based on all the techniques that applied to your data sets.
+
+```{r}
+outliers_ind <- Reduce(intersect, list(density_out$`Location of Outlier`, maha_out$`Location of Outlier`))
+
+full[outliers_ind, c("name", "artists")]
+```
+```{r}
+cleaned <- full[-c(20054, 24493, 36830, 38621, 40414, 56642, 56715, 60975, 73050, 74591, 75352, 78142, 91715, 92469, 92553, 93225, 108942, 124134, 124588, 141208, 141459, 142955, 152962, 154618, 154919, 156805, 164676, 169585, 169872, 169969, 170021), ]
+
+cleaned
+```
+```{r}
+write.csv(cleaned, "data/cleaned_songs.csv")
+```
+
+
+
+
+
+
+
+
+
+
+
