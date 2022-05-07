@@ -1,5 +1,6 @@
 # Jupyter Notebooks
 .ipynb_checkpoints/
-
+config.py
 # Data Folder
 data/
+.venv/
